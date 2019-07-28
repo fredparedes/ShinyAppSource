@@ -1,0 +1,73 @@
+---
+title: "Data Products Week 4 : Shiny Application and Reproducible Pitch"
+author: "Fred Paredes"
+date: "7/28/2019"
+output: ioslides_presentation
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(plotly)
+library(tidyverse)
+```
+
+## Overview
+
+This assignment has two parts. First, a Shiny application which is deployed on shinyapps.io and sourc code on github.com. Second, this presentation which is produced using Rstudio Presenter to create the reproducible pitch presentation about the "Motor Trend Car Data Exploration" application.
+
+The application demo built by Shiny and can be observed at the URL: https://fparedes2.shinyapps.io/week4assignment/
+
+Source codes incluiding ui.R and server.R are at GitHub for the application and presnetation at the URL:
+https://github.com/fredparedes/ShinyAppSource
+
+## Goal of Application
+
+The "Motor Trend Car Data Exploration" application is meant to explore the relationship of the two data sets car weight and miles per gallon as it relates to the variables horse power and quater mile. The application allows you to modify the variables horse power and quarter mile independently to see how the data set adjusts. The application produces two box plots for miles per gallon and car weight and a scatter plot with a fitted line to show the reletionship.
+
+## MTCars Data Set
+
+```{r}
+summary(mtcars)
+```
+
+## MTCars Sample Scatter Plot
+
+```{r mtcars}
+inputPanel(
+   
+        sliderInput("hp", label = h4("Horse Power (bhp):"),
+                                           min = floor(sort(min(mtcars$hp))),
+                                           max = ceiling(sort(max(mtcars$hp))),
+                                           value = 200),
+   
+        sliderInput("qrtsec", label = h4("Quater Mile Time (sec):"),
+                                           round = TRUE,
+                                           min = floor(sort(min(mtcars$qsec))),
+                                           max = ceiling(sort(max(mtcars$qsec))),
+                                           value = 20)
+)
+
+renderPlotly({
+    # generate dataset based on inputs from ui.R
+        x <- mtcars[which(mtcars$hp < input$hp & 
+                                  mtcars$qsec < input$qrtsec), ] 
+        
+        # access car names in row names
+        x <- x %>% rownames_to_column()
+        
+        pallete <- c("red", "blue", "green")
+        
+        fit <- lm(mpg ~ wt, data = x)
+        
+        plot_ly(data = x, x = ~wt, y = ~mpg, type = "scatter", mode = "markers",
+                text = ~paste("Car Name: ", x$rowname, "<br>Quarter Mile (sec): ", x$qsec), color = ~cyl, colors= pallete) %>%
+                layout(autosize = TRUE) %>%
+                layout(title = "Miles Per Gallon versus Weight") %>%
+                add_lines(x = ~wt, y = fitted(fit)) %>%
+                layout(showlegend = FALSE)
+})
+```
+
+
+
