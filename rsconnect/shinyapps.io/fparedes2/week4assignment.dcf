@@ -1,0 +1,12 @@
+name: week4assignment
+title:
+username:
+account: fparedes2
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 1029864
+bundleId: 2271818
+url: https://fparedes2.shinyapps.io/week4assignment/
+when: 1564340778.64812
+asMultiple: FALSE
+asStatic: FALSE
